@@ -12,40 +12,40 @@ from neural_network import RNNClassifier
 
 
 def to_one_hot(vector):
-	result = np.zeros((len(vector), 2))
-	result[np.arange(len(vector)), vector] = 1
-	return result
+    result = np.zeros((len(vector), 2))
+    result[np.arange(len(vector)), vector] = 1
+    return result
 
 
 def get_trend_df(code, end_date):
-	# get stock trends from 2016-08-01 to end_date_plus_one
-	start_date = '2016-08-01'
-	end_date_plus_one = str(datetime.datetime.strptime(end_date, "%Y-%m-%d") + pd.tseries.offsets.BDay(1))[:10]
-	prices = d.DataReader(code, 'yahoo', start_date, end_date_plus_one)['Adj Close'].values
-	trends = []
-	for idx in range(len(prices)):
-		if idx < 1:
-		    continue
-		else:
-		    trends.append(1) if prices[idx] > prices[idx - 1] else trends.append(0)
+    # get stock trends from 2016-08-01 to end_date_plus_one
+    start_date = '2016-08-01'
+    end_date_plus_one = str(datetime.datetime.strptime(end_date, "%Y-%m-%d") + pd.tseries.offsets.BDay(1))[:10]
+    prices = d.DataReader(code, 'yahoo', start_date, end_date_plus_one)['Adj Close'].values
+    trends = []
+    for idx in range(len(prices)):
+        if idx < 1:
+            continue
+        else:
+            trends.append(1) if prices[idx] > prices[idx - 1] else trends.append(0)
 
-	df = load_sen_df_from_local()
-	# get data from 2016-08-01 to end_date
-	df = df[:df[df['date'] == end_date_plus_one].index[0]]
-	# select company (stock code of S&P 500 is different from others)
-	if code != '^GSPC':
-		df = df[df['company'] == '$' + code]
-	else:
-		df = df[df['company'] == '$SPX']
-	# check length
-	assert len(trends) == len(df), "Unequal length"
-	# add stock trends into df
-	df['trend'] = trends
-	# we have bugs in Apple, remove them
-	if code == 'AAPL':
-		df = df[df['tweets'] != 0]
+    df = load_sen_df_from_local()
+    # get data from 2016-08-01 to end_date
+    df = df[:df[df['date'] == end_date_plus_one].index[0]]
+    # select company (stock code of S&P 500 is different from others)
+    if code != '^GSPC':
+        df = df[df['company'] == '$' + code]
+    else:
+        df = df[df['company'] == '$SPX']
+    # check length
+    assert len(trends) == len(df), "Unequal length"
+    # add stock trends into df
+    df['trend'] = trends
+    # we have bugs in Apple, remove them
+    if code == 'AAPL':
+        df = df[df['tweets'] != 0]
 
-	return df
+    return df
 
 
 def cross_validation(n_folds, X, y, clf, n_step, n_in):
@@ -69,21 +69,21 @@ df = get_trend_df(code, end_date='2016-12-01')
 
 features = ['tweets', 'liked']
 with tf.variable_scope('rnn1'):
-	clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
+    clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
 X = df[features].values
 y = to_one_hot(df['trend'].values)
 scores1 = cross_validation(n_folds, X, y, clf, n_step=len(features), n_in=1)
 
 features = ['pos_score', 'neg_score', 'com_score']
 with tf.variable_scope('rnn2'):
-	clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
+    clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
 X = df[features].values
 y = to_one_hot(df['trend'].values)
 scores2 = cross_validation(n_folds, X, y, clf, n_step=len(features), n_in=1)
 
 features = ['tweets', 'liked', 'pos_score', 'neg_score', 'com_score']
 with tf.variable_scope('rnn3'):
-	clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
+    clf = RNNClassifier(len(features), 1, n_hidden_units, 2, learn_rate)
 X = scale(df[features].values)
 y = to_one_hot(df['trend'].values)
 scores3 = cross_validation(n_folds, X, y, clf, n_step=len(features), n_in=1)
