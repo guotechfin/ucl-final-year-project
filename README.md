@@ -1,2 +1,2 @@
-# ucl-final-year-project
-Web showcase: https://zhedongzheng.github.io
+## Stock Market Prediction Using Deep Learning Techniques
+* https://zhedongzheng.github.io
