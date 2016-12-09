@@ -1,6 +1,6 @@
 ## Stock Market Prediction Using Deep Learning Techniques
-* https://zhedongzheng.github.io
-* features
+* My collected stock-related tweets dataset: https://zhedongzheng.github.io
+* Features
   * numeric data: an array of recent 30 past prices
   * visual data: an image of the plot of the trend of recent 30 past prices
   * Twitter data: predictors from daily tweets searching for the company's stock (e.g. $AAPL)
