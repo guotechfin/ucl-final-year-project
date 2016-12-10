@@ -1,5 +1,5 @@
 ## Stock Market Prediction Using Deep Learning Techniques
-* I have collected tweets related to 7 stocks since 2016-08-01: https://zhedongzheng.github.io
+* I have collected daily tweets related to 7 stocks since 2016-08-01: https://zhedongzheng.github.io
 * Features
   * numeric data: an array of recent 30 past prices
   * visual data: an image of the plot of the trend of recent 30 past prices
